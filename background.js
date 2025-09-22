@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.action.onClicked.addListener((tab) => {
-  // Verifica se a URL é válida antes de injetar script
+
   if (tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('moz-extension://')) {
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
@@ -18,8 +18,6 @@ chrome.action.onClicked.addListener((tab) => {
   }
 });
 
-// Remove listener desnecessário que estava vazio
-// chrome.tabs.onUpdated.addListener() removido para economizar recursos
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getSettings') {

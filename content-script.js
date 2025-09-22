@@ -7,13 +7,13 @@
   let debounceTimer = null;
 
   function applyHiddenClasses(classes, isEnabled) {
-    // Remove estilo anterior
+   
     if (styleElement) {
       styleElement.remove();
       styleElement = null;
     }
     
-    // Remove styles temporários de outras execuções
+  
     const tempStyles = document.querySelectorAll('style[data-extension="remove-component-temp"]');
     tempStyles.forEach(style => style.remove());
 
@@ -37,7 +37,7 @@
     styleElement.textContent = cssRules;
     document.head.appendChild(styleElement);
     
-    // Só inicia observação se necessário
+  
     startObserving();
   }
 
@@ -54,12 +54,12 @@
     
     observer = new MutationObserver(debounce(() => {
       if (isExtensionEnabled && currentClasses.length > 0) {
-        // Só reaplica se encontrar elementos que deveriam estar ocultos
+       
         const visibleElements = currentClasses.some(className => 
           document.querySelector(`.${className}:not([style*="display: none"])`)
         );
         if (visibleElements && styleElement) {
-          // Reforça apenas as regras CSS, sem recarregar storage
+         
           const cssRules = currentClasses.map(className => 
             `.${className} { display: none !important; }`
           ).join('\n');
@@ -94,14 +94,13 @@
     };
   }
 
-  // Storage listener - só atualiza quando há mudanças relevantes
   chrome.storage.onChanged.addListener((changes, namespace) => {
     if (namespace === 'local' && (changes.removedClasses || changes.extensionEnabled)) {
       loadAndApplySettings();
     }
   });
 
-  // Inicialização otimizada
+ 
   function initialize() {
     loadAndApplySettings();
   }
@@ -112,7 +111,6 @@
     initialize();
   }
 
-  // Cleanup quando a página é descarregada
   window.addEventListener('beforeunload', () => {
     stopObserving();
     clearTimeout(debounceTimer);
