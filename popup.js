@@ -105,41 +105,30 @@ function setupEventListeners() {
       return;
     }
     
-
+    // Adiciona à lista se ainda não existe
     if (!removedClasses.includes(className)) {
       removedClasses.push(className);
       saveSettings();
       renderClassesList();
     }
     
-
+    // Aplica remoção imediata na aba atual
     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id },
         func: (cls) => {
-       
+          // Remove elementos existentes
           document.querySelectorAll("." + cls).forEach(el => el.remove());
           
-     
-          let styleElement = document.querySelector('style[data-extension="remove-component-temp"]');
-          if (!styleElement) {
-            styleElement = document.createElement('style');
-            styleElement.setAttribute('data-extension', 'remove-component-temp');
-            document.head.appendChild(styleElement);
-          }
-          
-          const existingCSS = styleElement.textContent || '';
-          const newRule = `.${cls} { display: none !important; }`;
-          
-          if (!existingCSS.includes(newRule)) {
-            styleElement.textContent = existingCSS + '\n' + newRule;
+          // Força atualização do content script em vez de criar novo style
+          if (typeof window.updateRemoveComponentStyles === 'function') {
+            window.updateRemoveComponentStyles();
           }
         },
         args: [className]
       });
     });
     
-
     classNameInput.value = '';
   });
   
